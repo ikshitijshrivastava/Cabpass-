@@ -99,18 +99,11 @@
   .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .version { color: var(--muted); font-size: 11px; text-align: center; margin-top: 20px; }
-  .install-banner { 
-    position: fixed; bottom: 0; left: 0; right: 0;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    padding: 12px 20px;
-    display: none; align-items: center; gap: 12px;
-    z-index: 100;
-  }
+  .install-banner { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); padding: 12px 20px; display: none; align-items: center; gap: 12px; z-index: 100; }
   .install-banner p { flex: 1; font-size: 13px; color: var(--text); }
   .install-banner button { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; }
-  .install-banner .btn-install { background: var(--accent); color: #000; }
-  .install-banner .btn-dismiss { background: transparent; color: var(--muted); }
+  .btn-install { background: var(--accent); color: #000; }
+  .btn-dismiss { background: transparent; color: var(--muted); }
 </style>
 </head>
 <body>
@@ -118,75 +111,63 @@
 <div class="logo-area">
   <div class="logo-icon">🚖</div>
   <h1>Cab<span>Pass</span></h1>
-  <p class="tagline">Driver Network · Job Sharing · Billing</p>
+  <p class="tagline">The Digital Network for Pro Drivers</p>
 </div>
 
 <div class="card" id="loginCard">
-  <h2>Sign In</h2>
+  <h2>Welcome Back</h2>
   <div class="error-msg" id="loginError"></div>
   <div class="field">
-    <label>Mobile Number (User ID)</label>
-    <input type="tel" id="loginMobile" placeholder="+91 98765 43210" inputmode="tel">
+    <label>Mobile Number</label>
+    <input type="tel" id="loginMobile" placeholder="Enter registered mobile" inputmode="tel">
   </div>
   <div class="field">
     <label>Password</label>
-    <input type="password" id="loginPassword" placeholder="Your password">
+    <input type="password" id="loginPass" placeholder="••••••••">
   </div>
-  <div class="loading" id="loginLoading"><span class="spinner"></span> Signing in…</div>
-  <button class="btn" onclick="doLogin()">Sign In</button>
-  <div class="link-row">New here? <a href="#" onclick="showRegister()">Create Account</a></div>
+  <button class="btn" onclick="handleLogin()">Login to Dashboard</button>
+  <div class="loading" id="loginLoading"><span class="spinner"></span> Authenticating...</div>
+  <div class="link-row">
+    New here? <a href="#" onclick="showRegister()">Create an Account</a>
+  </div>
 </div>
 
-<div class="card" id="registerCard" style="display:none">
-  <h2>Create Account</h2>
+<div class="card" id="registerCard" style="display:none;">
+  <h2>Driver Registration</h2>
   <div class="error-msg" id="regError"></div>
   <div class="field">
-    <label>Your Name</label>
-    <input type="text" id="regName" placeholder="Full name">
+    <label>Full Name</label>
+    <input type="text" id="regName" placeholder="e.g. Rajesh Kumar">
   </div>
   <div class="field">
-    <label>Mobile Number (becomes your User ID)</label>
-    <input type="tel" id="regMobile" placeholder="+91 98765 43210" inputmode="tel">
+    <label>Mobile Number</label>
+    <input type="tel" id="regMobile" placeholder="e.g. 9876543210" inputmode="tel">
   </div>
   <div class="field">
-    <label>Password</label>
-    <input type="password" id="regPassword" placeholder="Minimum 6 characters">
+    <label>Set Password</label>
+    <input type="password" id="regPass" placeholder="Min 6 characters">
   </div>
-  <div class="field">
-    <label>Confirm Password</label>
-    <input type="password" id="regConfirm" placeholder="Repeat password">
+  <button class="btn" onclick="handleRegister()">Register Now</button>
+  <div class="loading" id="regLoading"><span class="spinner"></span> Creating Account...</div>
+  <div class="link-row">
+    Already have an account? <a href="#" onclick="showLogin()">Sign In</a>
   </div>
-  <div class="loading" id="regLoading"><span class="spinner"></span> Creating account…</div>
-  <button class="btn" onclick="doRegister()">Create Account</button>
-  <button class="btn btn-ghost" onclick="showLogin()">Back to Sign In</button>
 </div>
 
-<p class="version">CabPass v1.0 · PWA</p>
+<div class="version">v1.2.0 Build 2024.11</div>
 
 <div class="install-banner" id="installBanner">
-  <p>📲 Add CabPass to your home screen for quick access</p>
+  <p>Add CabPass to Home Screen for a faster experience.</p>
   <button class="btn-dismiss" onclick="dismissInstall()">Later</button>
   <button class="btn-install" onclick="installApp()">Install</button>
 </div>
 
-<!-- Firebase SDK -->
-<script>
-// Register Service Worker for PWA
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(()=>{
-      navigator.serviceWorker.register('sw.js');
-    });
-  });
-}
-</script>
-
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// ── PASTE YOUR FIREBASE CONFIG HERE ──────────────────────────────────────────
+// UPDATED FIREBASE CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyC3l3HropqR5iWZniCt5ZI3eGIXAvoTy-w",
   authDomain: "cabpass-f74b3.firebaseapp.com",
@@ -195,54 +176,56 @@ const firebaseConfig = {
   messagingSenderId: "651336919465",
   appId: "1:651336919465:web:c1dd5f5dfde9cd069a7cb8"
 };
-// ─────────────────────────────────────────────────────────────────────────────
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Helper: mobile → email format for Firebase Auth
-function mobileToEmail(mobile) {
-  return mobile.replace(/\D/g,'') + '@cabpass.app';
-}
-
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    window.location.href = 'dashboard.html';
-  }
+onAuthStateChanged(auth, (user) => {
+  if (user) window.location.href = 'dashboard.html';
 });
 
-window.doLogin = async function() {
-  const mobile = document.getElementById('loginMobile').value.trim();
-  const pass = document.getElementById('loginPassword').value;
+window.handleLogin = async function() {
+  const mobile = document.getElementById('loginMobile').value;
+  const pass = document.getElementById('loginPass').value;
   const err = document.getElementById('loginError');
   const loading = document.getElementById('loginLoading');
-  err.style.display='none';
-  if (!mobile || !pass) { err.textContent='Please fill all fields.'; err.style.display='block'; return; }
-  loading.style.display='block';
+  
+  if (!mobile || !pass) { err.textContent = 'Enter details'; err.style.display='block'; return; }
+  
+  err.style.display = 'none';
+  loading.style.display = 'block';
+  
   try {
-    await signInWithEmailAndPassword(auth, mobileToEmail(mobile), pass);
+    const email = mobile.replace(/\D/g,'') + "@cabpass.app";
+    await signInWithEmailAndPassword(auth, email, pass);
   } catch(e) {
     loading.style.display='none';
-    err.textContent = e.code === 'auth/invalid-credential' ? 'Invalid mobile or password.' : e.message;
+    err.textContent = "Invalid mobile or password.";
     err.style.display='block';
   }
 };
 
-window.doRegister = async function() {
-  const name = document.getElementById('regName').value.trim();
-  const mobile = document.getElementById('regMobile').value.trim();
-  const pass = document.getElementById('regPassword').value;
-  const confirm = document.getElementById('regConfirm').value;
+window.handleRegister = async function() {
+  const name = document.getElementById('regName').value;
+  const mobile = document.getElementById('regMobile').value;
+  const pass = document.getElementById('regPass').value;
   const err = document.getElementById('regError');
   const loading = document.getElementById('regLoading');
-  err.style.display='none';
-  if (!name || !mobile || !pass) { err.textContent='Please fill all fields.'; err.style.display='block'; return; }
-  if (pass !== confirm) { err.textContent='Passwords do not match.'; err.style.display='block'; return; }
-  if (pass.length < 6) { err.textContent='Password must be at least 6 characters.'; err.style.display='block'; return; }
-  loading.style.display='block';
+  
+  if (!name || !mobile || pass.length < 6) { 
+    err.textContent = 'Check your details (Password min 6 chars)'; 
+    err.style.display='block'; return; 
+  }
+  
+  err.style.display = 'none';
+  loading.style.display = 'block';
+  
   try {
-    const cred = await createUserWithEmailAndPassword(auth, mobileToEmail(mobile), pass);
+    const email = mobile.replace(/\D/g,'') + "@cabpass.app";
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    
+    // Store user core
     await setDoc(doc(db, 'users', cred.user.uid), {
       name, mobile: mobile.replace(/\D/g,''), uid: cred.user.uid,
       createdAt: new Date().toISOString(), role: 'driver'
@@ -286,3 +269,4 @@ window.showLogin = function() {
 </script>
 </body>
 </html>
+
