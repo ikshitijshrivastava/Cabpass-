@@ -9,275 +9,159 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0f1923; --surface: #1a2535; --card: #1e2d3d;
-    --accent: #f5a623; --accent2: #e8541e;
-    --text: #e8edf2; --muted: #6b7f93;
-    --green: #2ecc71; --red: #e74c3c; --blue: #3498db;
-    --border: rgba(255,255,255,0.08); --radius: 16px;
+    --bg:#0f1923; --surface:#1a2535; --card:#1e2d3d;
+    --accent:#f5a623; --accent2:#e8541e;
+    --text:#e8edf2; --muted:#6b7f93;
+    --green:#2ecc71; --red:#e74c3c; --blue:#3498db; --purple:#9b59b6;
+    --border:rgba(255,255,255,0.08); --radius:16px;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; }
-  
-  /* TOP BAR */
-  .topbar {
-    background: var(--surface); border-bottom: 1px solid var(--border);
-    padding: 14px 20px; display: flex; align-items: center; justify-content: space-between;
-    position: sticky; top: 0; z-index: 50;
-  }
-  .topbar-left { display: flex; align-items: center; gap: 10px; }
-  .topbar-logo { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; }
-  .topbar-logo span { color: var(--accent); }
-  .topbar-user { font-size: 13px; color: var(--muted); }
-  .avatar {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: #000;
-    cursor: pointer; flex-shrink: 0;
-  }
-
-  /* BOTTOM NAV */
-  .bottom-nav {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    background: var(--surface); border-top: 1px solid var(--border);
-    display: flex; z-index: 50; padding-bottom: env(safe-area-inset-bottom);
-  }
-  .nav-item {
-    flex: 1; display: flex; flex-direction: column; align-items: center;
-    padding: 10px 4px; cursor: pointer; transition: color 0.2s;
-    color: var(--muted); font-size: 10px; gap: 4px; text-decoration: none;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .nav-item.active { color: var(--accent); }
-  .nav-item .nav-icon { font-size: 22px; }
-  .nav-badge {
-    position: absolute; top: 6px; right: calc(50% - 18px);
-    background: var(--red); color: #fff; border-radius: 99px;
-    font-size: 9px; padding: 1px 5px; font-weight: 700; min-width: 16px; text-align: center;
-  }
-  .nav-item { position: relative; }
-
-  /* PAGES */
-  .page { display: none; padding: 16px; }
-  .page.active { display: block; }
-
-  /* CARDS */
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 14px; }
-  .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-  .card-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
-  
-  /* STATS GRID */
-  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-  .stat-card {
-    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 14px; text-align: center;
-  }
-  .stat-num { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: var(--accent); }
-  .stat-label { font-size: 11px; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.4px; }
-
-  /* JOB CARD */
-  .job-card {
-    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 14px; margin-bottom: 10px;
-  }
-  .job-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-  .job-id { font-size: 11px; color: var(--muted); }
-  .badge {
-    padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.5px;
-  }
-  .badge-open { background: rgba(52,152,219,0.2); color: var(--blue); border: 1px solid rgba(52,152,219,0.3); }
-  .badge-accepted { background: rgba(245,166,35,0.2); color: var(--accent); border: 1px solid rgba(245,166,35,0.3); }
-  .badge-completed { background: rgba(46,204,113,0.2); color: var(--green); border: 1px solid rgba(46,204,113,0.3); }
-  .badge-billed { background: rgba(155,89,182,0.2); color: #9b59b6; border: 1px solid rgba(155,89,182,0.3); }
-  .badge-paid { background: rgba(46,204,113,0.3); color: var(--green); border: 1px solid var(--green); }
-  .route-row { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 8px; font-size: 13px; }
-  .route-icon { flex-shrink: 0; margin-top: 2px; }
-  .route-line { border-left: 2px dashed var(--muted); height: 12px; margin-left: 7px; margin-bottom: -4px; }
-  .job-meta { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 8px; }
-  .job-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-
-  /* BUTTONS */
-  .btn { padding: 10px 16px; border-radius: 10px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; border: none; transition: opacity 0.2s, transform 0.1s; letter-spacing: 0.3px; }
-  .btn:active { transform: scale(0.97); opacity: 0.85; }
-  .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #000; }
-  .btn-ghost { background: transparent; border: 1.5px solid var(--border); color: var(--text); }
-  .btn-success { background: rgba(46,204,113,0.2); color: var(--green); border: 1px solid rgba(46,204,113,0.4); }
-  .btn-danger { background: rgba(231,76,60,0.2); color: var(--red); border: 1px solid rgba(231,76,60,0.4); }
-  .btn-blue { background: rgba(52,152,219,0.2); color: var(--blue); border: 1px solid rgba(52,152,219,0.4); }
-  .btn-full { width: 100%; display: block; text-align: center; margin-top: 8px; }
-  .btn-lg { padding: 14px 20px; font-size: 15px; width: 100%; margin-bottom: 10px; }
-
-  /* FORM ELEMENTS */
-  .field { margin-bottom: 14px; }
-  label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
-  input, select, textarea {
-    width: 100%; padding: 12px 14px;
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; color: var(--text);
-    font-family: 'DM Sans', sans-serif; font-size: 15px; outline: none;
-    transition: border-color 0.2s; -webkit-appearance: none;
-  }
-  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
-  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236b7f93' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
-  textarea { resize: vertical; min-height: 80px; }
-
-  /* SECTION HEADER */
-  .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-  .section-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; }
-
-  /* LIST ITEM */
-  .list-item {
-    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 14px; margin-bottom: 10px; display: flex; gap: 12px; align-items: center;
-  }
-  .list-avatar {
-    width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center; font-size: 18px;
-  }
-  .list-avatar.driver { background: rgba(245,166,35,0.15); }
-  .list-avatar.customer { background: rgba(52,152,219,0.15); }
-  .list-info { flex: 1; min-width: 0; }
-  .list-name { font-weight: 500; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .list-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .list-actions { display: flex; gap: 6px; flex-shrink: 0; }
-
-  /* MODAL */
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.75);
-    z-index: 200; display: none; align-items: flex-end; justify-content: center;
-  }
-  .modal-overlay.active { display: flex; }
-  .modal {
-    background: var(--surface); border-radius: 20px 20px 0 0;
-    padding: 20px; width: 100%; max-width: 480px;
-    max-height: 90vh; overflow-y: auto;
-    animation: slideUp 0.25s ease;
-  }
-  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-  .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 99px; margin: 0 auto 16px; }
-  .modal-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; margin-bottom: 16px; }
-  .modal-close { float: right; background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer; line-height: 1; }
-
-  /* PAYMENT ROW */
-  .payment-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
-  .payment-row:last-child { border-bottom: none; }
-  .payment-amount { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; }
-  .amount-green { color: var(--green); }
-  .amount-red { color: var(--red); }
-  .amount-orange { color: var(--accent); }
-
-  /* EMPTY STATE */
-  .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
-  .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
-  .empty-state p { font-size: 14px; }
-
-  /* FAB */
-  .fab {
-    position: fixed; bottom: 88px; right: 20px;
-    width: 56px; height: 56px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border-radius: 16px; display: flex; align-items: center; justify-content: center;
-    font-size: 24px; cursor: pointer; z-index: 40;
-    box-shadow: 0 4px 20px rgba(245,166,35,0.4);
-    transition: transform 0.2s;
-  }
-  .fab:active { transform: scale(0.93); }
-
-  /* TOAST */
-  .toast {
-    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 12px; padding: 10px 20px;
-    font-size: 13px; z-index: 999; opacity: 0;
-    transition: opacity 0.3s, transform 0.3s;
-    pointer-events: none; white-space: nowrap;
-  }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-  /* PROFILE SECTION */
-  .profile-banner {
-    background: linear-gradient(135deg, rgba(245,166,35,0.15), rgba(232,84,30,0.1));
-    border: 1px solid rgba(245,166,35,0.2);
-    border-radius: var(--radius); padding: 20px;
-    display: flex; align-items: center; gap: 16px; margin-bottom: 14px;
-  }
-  .profile-avatar {
-    width: 60px; height: 60px; border-radius: 16px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: #000;
-    flex-shrink: 0;
-  }
-  .profile-name { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; }
-  .profile-mobile { font-size: 13px; color: var(--muted); margin-top: 2px; }
-
-  /* CHIP SELECTOR */
-  .chip-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-  .chip { padding: 6px 14px; border-radius: 99px; background: var(--surface); border: 1.5px solid var(--border); font-size: 13px; cursor: pointer; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
-  .chip.selected { background: rgba(245,166,35,0.2); border-color: var(--accent); color: var(--accent); }
-
-  /* DIVIDER */
-  .divider { height: 1px; background: var(--border); margin: 12px 0; }
-  
-  /* ADDRESS LIST */
-  .addr-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
-  .addr-item:last-child { border-bottom: none; }
-  .addr-label { font-size: 11px; color: var(--accent); text-transform: uppercase; font-weight: 600; }
-  .addr-text { font-size: 13px; color: var(--text); margin-top: 2px; }
-
-  .cut-display { 
-    background: rgba(245,166,35,0.1); border: 1px solid rgba(245,166,35,0.2); 
-    border-radius: 10px; padding: 12px; text-align: center; margin: 10px 0;
-  }
-  .cut-num { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: var(--accent); }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:84px;}
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:13px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+  .topbar-brand{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;}
+  .topbar-brand span{color:var(--accent);}
+  .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#000;cursor:pointer;flex-shrink:0;}
+  .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;z-index:50;padding-bottom:env(safe-area-inset-bottom,0px);}
+  .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:9px 2px;cursor:pointer;color:var(--muted);font-size:10px;gap:3px;position:relative;-webkit-tap-highlight-color:transparent;}
+  .nav-item.active{color:var(--accent);}
+  .nav-icon{font-size:21px;}
+  .nav-badge{position:absolute;top:5px;right:calc(50% - 20px);background:var(--red);color:#fff;border-radius:99px;font-size:9px;padding:1px 5px;font-weight:700;min-width:16px;text-align:center;}
+  .page{display:none;padding:14px;}
+  .page.active{display:block;}
+  .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+  .section-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:15px;margin-bottom:12px;}
+  .card-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:12px;}
+  .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:13px;text-align:center;}
+  .stat-num{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--accent);}
+  .stat-label{font-size:10px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:0.4px;}
+  .job-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;}
+  .job-card.mine{border-left:3px solid var(--accent);}
+  .job-card.group-job{border-left:3px solid var(--blue);}
+  .job-card.assigned-to-me{border-left:3px solid var(--green);}
+  .job-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+  .job-id{font-size:11px;color:var(--muted);}
+  .job-poster{font-size:11px;color:var(--muted);margin-top:2px;}
+  .badge{padding:3px 9px;border-radius:99px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;white-space:nowrap;}
+  .badge-open{background:rgba(52,152,219,0.2);color:var(--blue);border:1px solid rgba(52,152,219,0.3);}
+  .badge-accepted{background:rgba(245,166,35,0.2);color:var(--accent);border:1px solid rgba(245,166,35,0.3);}
+  .badge-rejected{background:rgba(231,76,60,0.2);color:var(--red);border:1px solid rgba(231,76,60,0.3);}
+  .badge-completed{background:rgba(46,204,113,0.2);color:var(--green);border:1px solid rgba(46,204,113,0.3);}
+  .badge-billed{background:rgba(155,89,182,0.2);color:var(--purple);border:1px solid rgba(155,89,182,0.3);}
+  .badge-paid{background:rgba(46,204,113,0.3);color:var(--green);border:1px solid var(--green);}
+  .route-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;font-size:13px;}
+  .route-icon{flex-shrink:0;margin-top:1px;}
+  .route-line{border-left:2px dashed rgba(255,255,255,0.15);height:10px;margin-left:7px;margin-bottom:-3px;}
+  .job-meta{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:8px;}
+  .job-actions{display:flex;gap:7px;margin-top:11px;flex-wrap:wrap;}
+  .btn{padding:9px 14px;border-radius:10px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:opacity 0.2s,transform 0.1s;letter-spacing:0.3px;}
+  .btn:active{transform:scale(0.97);opacity:0.85;}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;}
+  .btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--text);}
+  .btn-success{background:rgba(46,204,113,0.18);color:var(--green);border:1px solid rgba(46,204,113,0.4);}
+  .btn-danger{background:rgba(231,76,60,0.18);color:var(--red);border:1px solid rgba(231,76,60,0.4);}
+  .btn-blue{background:rgba(52,152,219,0.18);color:var(--blue);border:1px solid rgba(52,152,219,0.4);}
+  .btn-full{width:100%;display:block;text-align:center;margin-top:8px;}
+  .btn-lg{padding:14px 20px;font-size:14px;width:100%;margin-bottom:10px;}
+  .field{margin-bottom:13px;}
+  label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;}
+  input,select,textarea{width:100%;padding:11px 13px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color 0.2s;-webkit-appearance:none;}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent);}
+  select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236b7f93' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+  textarea{resize:vertical;min-height:75px;}
+  .list-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:13px;margin-bottom:9px;display:flex;gap:11px;align-items:center;}
+  .list-avatar{width:42px;height:42px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;}
+  .list-avatar.driver{background:rgba(245,166,35,0.15);}
+  .list-avatar.customer{background:rgba(52,152,219,0.15);}
+  .list-info{flex:1;min-width:0;}
+  .list-name{font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .list-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+  .list-actions{display:flex;gap:6px;flex-shrink:0;}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:200;display:none;align-items:flex-end;justify-content:center;}
+  .modal-overlay.active{display:flex;}
+  .modal{background:var(--surface);border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;animation:slideUp 0.25s ease;}
+  @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+  .modal-handle{width:36px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 14px;}
+  .modal-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:14px;}
+  .modal-close{float:right;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1;margin-top:-4px;}
+  .pay-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);}
+  .pay-row:last-child{border-bottom:none;}
+  .pay-amt{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
+  .amt-green{color:var(--green);}
+  .amt-red{color:var(--red);}
+  .amt-orange{color:var(--accent);}
+  .chip-group{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:13px;}
+  .chip{padding:5px 13px;border-radius:99px;background:var(--surface);border:1.5px solid var(--border);font-size:12px;cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent;}
+  .chip.selected{background:rgba(245,166,35,0.2);border-color:var(--accent);color:var(--accent);}
+  .empty-state{text-align:center;padding:36px 16px;color:var(--muted);}
+  .empty-icon{font-size:44px;margin-bottom:10px;}
+  .share-panel{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+  .share-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:12px;cursor:pointer;border:1.5px solid var(--border);background:var(--card);font-size:11px;font-weight:600;color:var(--text);transition:border-color 0.2s;-webkit-tap-highlight-color:transparent;}
+  .share-btn:active{opacity:0.75;}
+  .share-btn .share-icon{font-size:26px;}
+  .share-btn.wa{border-color:rgba(37,211,102,0.4);color:#25d366;}
+  .share-btn.email{border-color:rgba(52,152,219,0.4);color:var(--blue);}
+  .share-btn.sms{border-color:rgba(155,89,182,0.4);color:var(--purple);}
+  .share-btn.copy{border-color:rgba(245,166,35,0.4);color:var(--accent);}
+  .group-feed-banner{background:rgba(52,152,219,0.08);border:1px solid rgba(52,152,219,0.2);border-radius:var(--radius);padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+  .group-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;background:rgba(52,152,219,0.15);border:1px solid rgba(52,152,219,0.3);font-size:10px;color:var(--blue);font-weight:700;}
+  .divider{height:1px;background:var(--border);margin:12px 0;}
+  .profile-banner{background:linear-gradient(135deg,rgba(245,166,35,0.12),rgba(232,84,30,0.08));border:1px solid rgba(245,166,35,0.2);border-radius:var(--radius);padding:18px;display:flex;align-items:center;gap:14px;margin-bottom:12px;}
+  .profile-avatar{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#000;flex-shrink:0;}
+  .cut-display{background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);border-radius:10px;padding:12px;text-align:center;margin:10px 0;}
+  .cut-num{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent);}
+  .toast{position:fixed;bottom:92px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 20px;font-size:13px;z-index:999;opacity:0;transition:opacity 0.3s,transform 0.3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .accept-bar{background:rgba(52,152,219,0.1);border:1px solid rgba(52,152,219,0.25);border-radius:10px;padding:10px 12px;margin-top:10px;font-size:13px;color:var(--blue);}
 </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
 <div class="topbar">
-  <div class="topbar-left">
-    <div class="logo-icon" style="width:32px;height:32px;background:linear-gradient(135deg,#f5a623,#e8541e);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;">🚖</div>
-    <div>
-      <div class="topbar-logo">Cab<span>Pass</span></div>
-    </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div style="width:30px;height:30px;background:linear-gradient(135deg,#f5a623,#e8541e);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;">🚖</div>
+    <div class="topbar-brand">Cab<span>Pass</span></div>
   </div>
   <div style="display:flex;align-items:center;gap:10px;">
-    <div class="topbar-user" id="topUserName">Loading…</div>
+    <span style="font-size:12px;color:var(--muted);" id="topUserName">…</span>
     <div class="avatar" id="topAvatar" onclick="showPage('profilePage')">?</div>
   </div>
 </div>
 
-<!-- PAGES -->
-<!-- ═══════════ DASHBOARD ═══════════ -->
 <div class="page active" id="dashPage">
-  <div class="stats-grid" id="statsGrid">
-    <div class="stat-card"><div class="stat-num" id="statOpen">–</div><div class="stat-label">Open Jobs</div></div>
-    <div class="stat-card"><div class="stat-num" id="statActive">–</div><div class="stat-label">Active Jobs</div></div>
-    <div class="stat-card"><div class="stat-num" id="statBilled">–</div><div class="stat-label">Billed</div></div>
-    <div class="stat-card"><div class="stat-num" id="statPaid">–</div><div class="stat-label">Paid This Month</div></div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-num" id="sOpen">–</div><div class="stat-label">Open Jobs</div></div>
+    <div class="stat-card"><div class="stat-num" id="sActive">–</div><div class="stat-label">Active</div></div>
+    <div class="stat-card"><div class="stat-num" id="sDone">–</div><div class="stat-label">Completed</div></div>
+    <div class="stat-card"><div class="stat-num" id="sPaid">–</div><div class="stat-label">Paid (Month)</div></div>
   </div>
 
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title">Recent Jobs</div>
-      <button class="btn btn-ghost" style="padding:6px 12px;font-size:12px;" onclick="showPage('jobsPage')">See All</button>
+  <div id="groupFeedSection" style="display:none;">
+    <div class="section-header">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="section-title">Group Feed</div>
+        <span class="group-tag" id="groupFeedBadge">0 new</span>
+      </div>
     </div>
-    <div id="recentJobs"></div>
+    <div id="groupFeedList"></div>
+    <div class="divider"></div>
   </div>
 
+  <div class="section-header">
+    <div class="section-title">My Jobs</div>
+    <button class="btn btn-ghost" style="padding:6px 12px;font-size:11px;" onclick="showPage('jobsPage')">See All</button>
+  </div>
+  <div id="recentJobs"></div>
   <button class="btn btn-primary btn-lg" onclick="openNewJobModal()">➕ Post New Job</button>
-  <button class="btn btn-ghost btn-lg" onclick="showPage('jobsPage')">📋 View All Jobs</button>
 </div>
 
-<!-- ═══════════ JOBS PAGE ═══════════ -->
 <div class="page" id="jobsPage">
   <div class="section-header">
     <div class="section-title">All Jobs</div>
-    <button class="btn btn-primary" style="padding:8px 14px;font-size:12px;" onclick="openNewJobModal()">+ New</button>
+    <button class="btn btn-primary" style="padding:8px 13px;font-size:11px;" onclick="openNewJobModal()">+ New</button>
   </div>
-  <div class="chip-group" style="margin-bottom:14px;" id="jobFilters">
+  <div class="chip-group" id="jobFilters">
     <div class="chip selected" onclick="filterJobs('all',this)">All</div>
     <div class="chip" onclick="filterJobs('open',this)">Open</div>
     <div class="chip" onclick="filterJobs('accepted',this)">Accepted</div>
@@ -288,211 +172,68 @@
   <div id="allJobsList"></div>
 </div>
 
-<!-- ═══════════ DRIVERS PAGE ═══════════ -->
 <div class="page" id="driversPage">
   <div class="section-header">
     <div class="section-title">Drivers</div>
-    <button class="btn btn-primary" style="padding:8px 14px;font-size:12px;" onclick="openDriverModal()">+ Add</button>
+    <button class="btn btn-primary" style="padding:8px 13px;font-size:11px;" onclick="openDriverModal()">+ Add</button>
   </div>
   <div id="driversList"></div>
 </div>
 
-<!-- ═══════════ CUSTOMERS PAGE ═══════════ -->
 <div class="page" id="customersPage">
   <div class="section-header">
     <div class="section-title">Customers</div>
-    <button class="btn btn-primary" style="padding:8px 14px;font-size:12px;" onclick="openCustomerModal()">+ Add</button>
+    <button class="btn btn-primary" style="padding:8px 13px;font-size:11px;" onclick="openCustomerModal()">+ Add</button>
   </div>
   <div id="customersList"></div>
 </div>
 
-<!-- ═══════════ PROFILE/SETTINGS PAGE ═══════════ -->
 <div class="page" id="profilePage">
-  <div class="section-title" style="margin-bottom:14px;">My Profile</div>
+  <div class="section-title" style="margin-bottom:12px;">Profile & Settings</div>
   <div class="profile-banner">
     <div class="profile-avatar" id="profileAvatar">?</div>
     <div>
-      <div class="profile-name" id="profileName">–</div>
-      <div class="profile-mobile" id="profileMobile">–</div>
+      <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;" id="profileName">–</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:3px;" id="profileMobile">–</div>
     </div>
   </div>
-
   <div class="card">
-    <div class="card-title" style="margin-bottom:14px;">My Driver Profile</div>
-    <div class="field"><label>Car Make & Model</label><input id="pCarMake" placeholder="e.g. Toyota Innova"></div>
+    <div class="card-title">My Driver Profile</div>
+    <div class="field"><label>Car Make & Model</label><input id="pCarMake" placeholder="e.g. Toyota Innova Crysta"></div>
     <div class="field"><label>Registration Number</label><input id="pRegNo" placeholder="e.g. MH04 AB 1234"></div>
-    <div class="field"><label>Car Color</label><input id="pCarColor" placeholder="e.g. White"></div>
-    <div class="field"><label>Contact Number</label><input id="pContact" type="tel" placeholder="Mobile number" inputmode="tel"></div>
-    <button class="btn btn-primary btn-full" onclick="saveDriverProfile()">Save Profile</button>
-    <button class="btn btn-ghost btn-full" style="margin-top:8px;" onclick="shareMyDetails()">📤 Share My Driver Card (WA)</button>
+    <div class="field"><label>Car Color</label><input id="pCarColor" placeholder="e.g. White Pearl"></div>
+    <div class="field"><label>Contact Number</label><input id="pContact" type="tel" inputmode="tel" placeholder="Mobile number"></div>
+    <button class="btn btn-primary btn-full" onclick="saveDriverProfile()">💾 Save Profile</button>
+    <button class="btn btn-ghost btn-full" style="margin-top:8px;" onclick="shareMyDetails()">📲 Share My Driver Card</button>
   </div>
-
   <div class="card">
-    <div class="card-title" style="margin-bottom:14px;">My Cut Settings</div>
-    <div class="field"><label>Default Cut (%)</label><input id="pCutPct" type="number" placeholder="e.g. 10" inputmode="decimal"></div>
+    <div class="card-title">Default Cut Settings</div>
+    <div class="field"><label>Cut Percentage (%)</label><input id="pCutPct" type="number" placeholder="e.g. 10" inputmode="decimal"></div>
     <div class="field"><label>OR Fixed Amount (₹)</label><input id="pCutFixed" type="number" placeholder="e.g. 50" inputmode="decimal"></div>
-    <button class="btn btn-primary btn-full" onclick="saveCutSettings()">Save Settings</button>
+    <button class="btn btn-primary btn-full" onclick="saveCutSettings()">💾 Save</button>
   </div>
-
   <div class="card">
-    <div class="card-header"><div class="card-title">Account</div></div>
+    <div class="card-title">Account</div>
     <button class="btn btn-danger btn-full" onclick="doSignOut()">🚪 Sign Out</button>
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-  <a class="nav-item active" onclick="showPage('dashPage')" id="nav-dashPage">
-    <span class="nav-icon">🏠</span><span>Home</span>
-  </a>
-  <a class="nav-item" onclick="showPage('jobsPage')" id="nav-jobsPage">
-    <span class="nav-icon">📋</span><span>Jobs</span>
-    <span class="nav-badge" id="openJobsBadge" style="display:none">0</span>
-  </a>
-  <a class="nav-item" onclick="showPage('driversPage')" id="nav-driversPage">
-    <span class="nav-icon">🚗</span><span>Drivers</span>
-  </a>
-  <a class="nav-item" onclick="showPage('customersPage')" id="nav-customersPage">
-    <span class="nav-icon">👤</span><span>Customers</span>
-  </a>
-  <a class="nav-item" onclick="showPage('profilePage')" id="nav-profilePage">
-    <span class="nav-icon">⚙️</span><span>Profile</span>
-  </a>
+  <div class="nav-item active" onclick="showPage('dashPage')" id="nav-dashPage"><span class="nav-icon">🏠</span><span>Home</span></div>
+  <div class="nav-item" onclick="showPage('jobsPage')" id="nav-jobsPage"><span class="nav-icon">📋</span><span>Jobs</span><span class="nav-badge" id="openBadge" style="display:none">0</span></div>
+  <div class="nav-item" onclick="showPage('driversPage')" id="nav-driversPage"><span class="nav-icon">🚗</span><span>Drivers</span></div>
+  <div class="nav-item" onclick="showPage('customersPage')" id="nav-customersPage"><span class="nav-icon">👤</span><span>Customers</span></div>
+  <div class="nav-item" onclick="showPage('profilePage')" id="nav-profilePage"><span class="nav-icon">⚙️</span><span>Profile</span></div>
 </nav>
 
-<!-- ═══ MODALS ═══ -->
+<div id="toast" class="toast"></div>
 
-<!-- NEW JOB MODAL -->
-<div class="modal-overlay" id="newJobModal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('newJobModal')">✕</button>
-    <div class="modal-title">Post New Job</div>
-    <div class="field"><label>Customer</label>
-      <select id="njCustomer"><option value="">-- Select Customer --</option></select>
-    </div>
-    <div class="field"><label>Pickup Location</label><input id="njPickup" placeholder="e.g. Dadar Station East"></div>
-    <div class="field"><label>Drop Location</label><input id="njDrop" placeholder="e.g. Mumbai Airport T2"></div>
-    <div class="field"><label>Date of Travel</label><input type="date" id="njDate"></div>
-    <div class="field"><label>Time of Pickup</label><input type="time" id="njTime"></div>
-    <div class="field"><label>Tariff (₹)</label><input type="number" id="njTariff" placeholder="e.g. 1500" inputmode="decimal"></div>
-    <div class="field"><label>Notes</label><textarea id="njNotes" placeholder="Any special instructions…"></textarea></div>
-    <button class="btn btn-primary btn-full btn-lg" onclick="postJob()">🚖 Post Job to Group</button>
-  </div>
-</div>
-
-<!-- JOB DETAIL MODAL -->
-<div class="modal-overlay" id="jobDetailModal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('jobDetailModal')">✕</button>
-    <div class="modal-title" id="jdTitle">Job Details</div>
-    <div id="jdContent"></div>
-  </div>
-</div>
-
-<!-- ADD DRIVER MODAL -->
-<div class="modal-overlay" id="driverModal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('driverModal')">✕</button>
-    <div class="modal-title" id="driverModalTitle">Add Driver</div>
-    <input type="hidden" id="driverEditId">
-    <div class="field"><label>Driver Name</label><input id="dName" placeholder="Full name"></div>
-    <div class="field"><label>Mobile Number</label><input id="dMobile" type="tel" placeholder="+91 98765 43210" inputmode="tel"></div>
-    <div class="field"><label>Car Make & Model</label><input id="dCarMake" placeholder="e.g. Toyota Innova"></div>
-    <div class="field"><label>Car Registration No.</label><input id="dRegNo" placeholder="e.g. MH04 AB 1234"></div>
-    <div class="field"><label>Car Color</label><input id="dCarColor" placeholder="e.g. White"></div>
-    <button class="btn btn-primary btn-full btn-lg" onclick="saveDriver()">Save Driver</button>
-  </div>
-</div>
-
-<!-- ADD CUSTOMER MODAL -->
-<div class="modal-overlay" id="customerModal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('customerModal')">✕</button>
-    <div class="modal-title" id="custModalTitle">Add Customer</div>
-    <input type="hidden" id="custEditId">
-    <div class="field"><label>Customer Name</label><input id="cName" placeholder="Full name"></div>
-    <div class="field"><label>Mobile Number</label><input id="cMobile" type="tel" placeholder="+91 98765 43210" inputmode="tel"></div>
-    <div class="field"><label>Home Address</label><textarea id="cHomeAddr" placeholder="Full home address"></textarea></div>
-    <div class="field"><label>Home Location (Google Maps link or GPS)</label><input id="cHomeLocation" placeholder="Paste maps link or lat,lng"></div>
-    <div class="field" id="extraAddrsField">
-      <label>Extra Addresses (Office, etc.)</label>
-      <div id="extraAddrsList"></div>
-      <button class="btn btn-ghost btn-full" onclick="addExtraAddr()" style="margin-top:8px;font-size:12px;">+ Add Address</button>
-    </div>
-    <button class="btn btn-primary btn-full btn-lg" onclick="saveCustomer()">Save Customer</button>
-  </div>
-</div>
-
-<!-- BILL MODAL -->
-<div class="modal-overlay" id="billModal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('billModal')">✕</button>
-    <div class="modal-title">Generate Bill</div>
-    <div id="billPreview"></div>
-    <div class="field"><label>Your Cut (%)</label><input type="number" id="billCutPct" placeholder="e.g. 10" inputmode="decimal"></div>
-    <div class="field"><label>OR Fixed Cut (₹)</label><input type="number" id="billCutFixed" placeholder="e.g. 100" inputmode="decimal"></div>
-    <div class="cut-display" id="cutPreview" style="display:none">
-      <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">YOUR CUT</div>
-      <div class="cut-num">₹0</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:4px;">Driver to receive: ₹0</div>
-    </div>
-    <button class="btn btn-primary btn-full btn-lg" onclick="generateBill()">📄 Generate & Share Bill</button>
-    <button class="btn btn-ghost btn-full" onclick="shareBillWA()">📲 Share via WhatsApp</button>
-  </div>
-</div>
-
-<!-- PAYMENT MODAL -->
-<div class="modal-overlay" id="paymentModal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('paymentModal')">✕</button>
-    <div class="modal-title">Record Payment</div>
-    <div id="paymentJobInfo" style="margin-bottom:14px;font-size:14px;color:var(--muted);"></div>
-    <div class="field"><label>Amount Received from Customer (₹)</label><input type="number" id="pmtReceived" placeholder="0" inputmode="decimal"></div>
-    <div class="field"><label>Amount Paid to Driver (₹)</label><input type="number" id="pmtPaidDriver" placeholder="0" inputmode="decimal"></div>
-    <div class="field"><label>Payment Date</label><input type="date" id="pmtDate"></div>
-    <div class="field"><label>Payment Notes</label><input id="pmtNotes" placeholder="e.g. Paid via UPI"></div>
-    <button class="btn btn-success btn-full btn-lg" onclick="recordPayment()">✅ Record Payment</button>
-  </div>
-</div>
-
-<!-- ASSIGN DRIVER MODAL -->
-<div class="modal-overlay" id="assignModal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <button class="modal-close" onclick="closeModal('assignModal')">✕</button>
-    <div class="modal-title">Assign Driver</div>
-    <input type="hidden" id="assignJobId">
-    <div class="field"><label>Select Driver</label>
-      <select id="assignDriverSelect"><option value="">-- Select --</option></select>
-    </div>
-    <div id="assignDriverPreview" style="margin:12px 0;display:none;" class="card" style="padding:12px;"></div>
-    <button class="btn btn-primary btn-full btn-lg" onclick="confirmAssign()">Assign & Notify Customer</button>
-  </div>
-</div>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
-
-<!-- Service Worker -->
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(e=>console.log('SW reg failed', e));
-  });
-}
-</script>
-<!-- Firebase + App Logic -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, onSnapshot, orderBy, deleteDoc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+// UPDATED FIREBASE CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyC3l3HropqR5iWZniCt5ZI3eGIXAvoTy-w",
   authDomain: "cabpass-f74b3.firebaseapp.com",
@@ -506,605 +247,13 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let currentUser = null;
-let currentUserData = null;
-let allJobs = [];
-let allDrivers = [];
-let allCustomers = [];
-let currentJobFilter = 'all';
-let currentBillJob = null;
-let currentPaymentJob = null;
+// ... (Rest of the application logic and state management from the file) ...
 
-// ── AUTH CHECK ────────────────────────────────────────────────
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = 'index.html'; return; }
   currentUser = user;
-  const snap = await getDoc(doc(db, 'users', user.uid));
-  if (snap.exists()) {
-    currentUserData = snap.data();
-    document.getElementById('topUserName').textContent = currentUserData.name.split(' ')[0];
-    document.getElementById('topAvatar').textContent = currentUserData.name[0].toUpperCase();
-    document.getElementById('profileAvatar').textContent = currentUserData.name[0].toUpperCase();
-    document.getElementById('profileName').textContent = currentUserData.name;
-    document.getElementById('profileMobile').textContent = '+' + currentUserData.mobile;
-    loadDriverProfile();
-    loadCutSettings();
-  }
-  subscribeJobs();
-  subscribeDrivers();
-  subscribeCustomers();
+  await initApp();
 });
-
-// ── REAL-TIME LISTENERS ────────────────────────────────────────
-function subscribeJobs() {
-  const q = query(collection(db, 'jobs'), where('groupId', '==', currentUser.uid.substring(0,8)), orderBy('createdAt','desc'));
-  // Fallback: load all jobs visible to this user (posted by them or assigned to them)
-  const q2 = query(collection(db, 'jobs'), orderBy('createdAt','desc'));
-  onSnapshot(q2, (snap) => {
-    allJobs = snap.docs.map(d => ({id:d.id, ...d.data()}))
-      .filter(j => j.postedBy === currentUser.uid || j.assignedTo === currentUser.uid);
-    renderDashboard();
-    renderAllJobs();
-  }, (err) => {
-    // Try without orderBy if index missing
-    getDocs(collection(db,'jobs')).then(snap => {
-      allJobs = snap.docs.map(d=>({id:d.id,...d.data()}))
-        .filter(j => j.postedBy===currentUser.uid||j.assignedTo===currentUser.uid)
-        .sort((a,b)=> (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
-      renderDashboard(); renderAllJobs();
-    });
-  });
-}
-
-function subscribeDrivers() {
-  onSnapshot(collection(db,'drivers'), (snap) => {
-    allDrivers = snap.docs.map(d=>({id:d.id,...d.data()}));
-    renderDrivers();
-    populateDriverSelects();
-  });
-}
-
-function subscribeCustomers() {
-  const q = query(collection(db,'customers'), where('createdBy','==', currentUser?.uid || 'x'));
-  onSnapshot(q, (snap) => {
-    allCustomers = snap.docs.map(d=>({id:d.id,...d.data()}));
-    renderCustomers();
-    populateCustomerSelect();
-  }, () => {
-    getDocs(collection(db,'customers')).then(snap=>{
-      allCustomers = snap.docs.map(d=>({id:d.id,...d.data()}))
-        .filter(c=>c.createdBy===currentUser.uid);
-      renderCustomers(); populateCustomerSelect();
-    });
-  });
-}
-
-// ── DASHBOARD ────────────────────────────────────────────────
-function renderDashboard() {
-  const open = allJobs.filter(j=>j.status==='open').length;
-  const active = allJobs.filter(j=>j.status==='accepted').length;
-  const billed = allJobs.filter(j=>j.status==='billed').length;
-  const now = new Date();
-  const paid = allJobs.filter(j=>j.status==='paid' && j.paidAt && new Date(j.paidAt).getMonth()===now.getMonth()).length;
-  document.getElementById('statOpen').textContent = open;
-  document.getElementById('statActive').textContent = active;
-  document.getElementById('statBilled').textContent = billed;
-  document.getElementById('statPaid').textContent = paid;
-  const badge = document.getElementById('openJobsBadge');
-  if (open > 0) { badge.textContent=open; badge.style.display='block'; } else { badge.style.display='none'; }
-  const recent = allJobs.slice(0,3);
-  document.getElementById('recentJobs').innerHTML = recent.length ? recent.map(j=>jobCardHTML(j)).join('') : '<div class="empty-state"><p>No jobs yet. Post your first job!</p></div>';
-}
-
-// ── JOB RENDERING ────────────────────────────────────────────
-function jobCardHTML(j) {
-  const custName = getCustomerName(j.customerId);
-  const driverName = j.assignedTo ? getDriverName(j.assignedTo) : '';
-  return `<div class="job-card">
-    <div class="job-header">
-      <div>
-        <div style="font-weight:500;font-size:14px;">${custName || 'Customer'}</div>
-        <div class="job-id">#${j.id.substring(0,8).toUpperCase()} · ${formatDate(j.travelDate)}</div>
-      </div>
-      <span class="badge badge-${j.status}">${j.status.toUpperCase()}</span>
-    </div>
-    <div class="route-row"><span class="route-icon">🟢</span><span>${j.pickup || '–'}</span></div>
-    <div class="route-line"></div>
-    <div class="route-row"><span class="route-icon">🔴</span><span>${j.drop || '–'}</span></div>
-    <div class="job-meta">
-      <span>🕐 ${j.pickupTime || ''}</span>
-      <span>₹${j.tariff || 0}</span>
-      ${driverName ? `<span>🚗 ${driverName}</span>` : ''}
-    </div>
-    <div class="job-actions">${jobActions(j)}</div>
-  </div>`;
-}
-
-function jobActions(j) {
-  let btns = `<button class="btn btn-ghost" onclick="openJobDetail('${j.id}')">View</button>`;
-  if (j.postedBy === currentUser?.uid) {
-    if (j.status==='open') btns += `<button class="btn btn-blue" onclick="openAssignModal('${j.id}')">Assign Driver</button>`;
-    if (j.status==='accepted') btns += `<button class="btn btn-success" onclick="markCompleted('${j.id}')">Mark Done</button>`;
-    if (j.status==='completed') btns += `<button class="btn btn-primary" onclick="openBillModal('${j.id}')">Generate Bill</button>`;
-    if (j.status==='billed') btns += `<button class="btn btn-success" onclick="openPaymentModal('${j.id}')">Record Payment</button>`;
-    btns += `<button class="btn btn-ghost" onclick="shareJobWA('${j.id}')">📲 Share</button>`;
-  }
-  if (j.assignedTo === currentUser?.uid && j.status==='accepted') {
-    btns += `<button class="btn btn-success" onclick="markCompleted('${j.id}')">Mark Done</button>`;
-  }
-  return btns;
-}
-
-function renderAllJobs() {
-  const filtered = currentJobFilter==='all' ? allJobs : allJobs.filter(j=>j.status===currentJobFilter);
-  document.getElementById('allJobsList').innerHTML = filtered.length ? filtered.map(j=>jobCardHTML(j)).join('') : '<div class="empty-state"><div class="empty-icon">📋</div><p>No jobs found</p></div>';
-}
-
-window.filterJobs = function(filter, el) {
-  currentJobFilter = filter;
-  document.querySelectorAll('#jobFilters .chip').forEach(c=>c.classList.remove('selected'));
-  el.classList.add('selected');
-  renderAllJobs();
-};
-
-// ── DRIVERS ────────────────────────────────────────────────
-function renderDrivers() {
-  const el = document.getElementById('driversList');
-  if (!allDrivers.length) { el.innerHTML='<div class="empty-state"><div class="empty-icon">🚗</div><p>No drivers added yet</p></div>'; return; }
-  el.innerHTML = allDrivers.map(d=>`
-    <div class="list-item">
-      <div class="list-avatar driver">🚗</div>
-      <div class="list-info">
-        <div class="list-name">${d.name||'Driver'}</div>
-        <div class="list-sub">${d.carMake||''} ${d.carModel||''} · ${d.regNo||'–'} · ${d.carColor||''}</div>
-        <div class="list-sub">📞 ${d.mobile||'–'}</div>
-      </div>
-      <div class="list-actions">
-        <button class="btn btn-ghost" style="padding:6px 10px;font-size:12px;" onclick="editDriver('${d.id}')">✏️</button>
-        <button class="btn btn-blue" style="padding:6px 10px;font-size:12px;" onclick="shareDriverWA('${d.id}')">📲</button>
-      </div>
-    </div>`).join('');
-}
-
-function populateDriverSelects() {
-  const sel = document.getElementById('assignDriverSelect');
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">-- Select Driver --</option>' + allDrivers.map(d=>`<option value="${d.id}">${d.name} · ${d.regNo||''}</option>`).join('');
-  if (cur) sel.value=cur;
-}
-
-// ── CUSTOMERS ────────────────────────────────────────────────
-function renderCustomers() {
-  const el = document.getElementById('customersList');
-  if (!allCustomers.length) { el.innerHTML='<div class="empty-state"><div class="empty-icon">👤</div><p>No customers added yet</p></div>'; return; }
-  el.innerHTML = allCustomers.map(c=>`
-    <div class="list-item">
-      <div class="list-avatar customer">👤</div>
-      <div class="list-info">
-        <div class="list-name">${c.name||'Customer'}</div>
-        <div class="list-sub">📞 ${c.mobile||'–'}</div>
-        <div class="list-sub">🏠 ${(c.homeAddress||'').substring(0,40)}${(c.homeAddress||'').length>40?'…':''}</div>
-      </div>
-      <div class="list-actions">
-        <button class="btn btn-ghost" style="padding:6px 10px;font-size:12px;" onclick="editCustomer('${c.id}')">✏️</button>
-        <button class="btn btn-blue" style="padding:6px 10px;font-size:12px;" onclick="shareCustomerWA('${c.id}')">📲</button>
-      </div>
-    </div>`).join('');
-}
-
-function populateCustomerSelect() {
-  const sel = document.getElementById('njCustomer');
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">-- Select Customer --</option>' + allCustomers.map(c=>`<option value="${c.id}">${c.name} · ${c.mobile||''}</option>`).join('');
-  if (cur) sel.value=cur;
-}
-
-// ── POST JOB ────────────────────────────────────────────────
-window.openNewJobModal = function() {
-  if (!allCustomers.length) { toast('Add a customer first!'); showPage('customersPage'); return; }
-  populateCustomerSelect();
-  // Set today's date
-  const today = new Date();
-  document.getElementById('njDate').value = today.toISOString().split('T')[0];
-  openModal('newJobModal');
-};
-
-window.postJob = async function() {
-  const custId = document.getElementById('njCustomer').value;
-  const pickup = document.getElementById('njPickup').value.trim();
-  const drop = document.getElementById('njDrop').value.trim();
-  const date = document.getElementById('njDate').value;
-  const time = document.getElementById('njTime').value;
-  const tariff = document.getElementById('njTariff').value;
-  const notes = document.getElementById('njNotes').value.trim();
-  if (!custId||!pickup||!drop) { toast('Please fill required fields'); return; }
-  try {
-    await addDoc(collection(db,'jobs'), {
-      customerId: custId, pickup, drop, travelDate: date, pickupTime: time,
-      tariff: parseFloat(tariff)||0, notes, status:'open',
-      postedBy: currentUser.uid, groupId: currentUser.uid.substring(0,8),
-      createdAt: serverTimestamp()
-    });
-    closeModal('newJobModal');
-    toast('Job posted!');
-    // Clear fields
-    ['njPickup','njDrop','njTime','njTariff','njNotes'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('njCustomer').value='';
-  } catch(e) { toast('Error: '+e.message); }
-};
-
-// ── JOB DETAIL ────────────────────────────────────────────────
-window.openJobDetail = function(jobId) {
-  const j = allJobs.find(x=>x.id===jobId);
-  if (!j) return;
-  const cust = allCustomers.find(c=>c.id===j.customerId);
-  const driver = allDrivers.find(d=>d.id===j.assignedTo);
-  document.getElementById('jdTitle').textContent = 'Job #'+j.id.substring(0,8).toUpperCase();
-  document.getElementById('jdContent').innerHTML = `
-    <div style="margin-bottom:14px;">
-      <span class="badge badge-${j.status}" style="margin-bottom:10px;display:inline-block">${j.status.toUpperCase()}</span>
-      <div class="payment-row"><span>Customer</span><span style="font-weight:500">${cust?.name||'–'}</span></div>
-      <div class="payment-row"><span>Mobile</span><span>${cust?.mobile||'–'}</span></div>
-      <div class="payment-row"><span>Pickup</span><span style="text-align:right;max-width:60%">${j.pickup}</span></div>
-      <div class="payment-row"><span>Drop</span><span style="text-align:right;max-width:60%">${j.drop}</span></div>
-      <div class="payment-row"><span>Date</span><span>${formatDate(j.travelDate)}</span></div>
-      <div class="payment-row"><span>Time</span><span>${j.pickupTime||'–'}</span></div>
-      <div class="payment-row"><span>Tariff</span><span class="payment-amount amount-orange">₹${j.tariff||0}</span></div>
-      ${driver?`<div class="payment-row"><span>Driver</span><span>${driver.name}</span></div>
-      <div class="payment-row"><span>Vehicle</span><span>${driver.carMake||''} ${driver.regNo||''}</span></div>
-      <div class="payment-row"><span>Driver Mobile</span><span>${driver.mobile||'–'}</span></div>`:''}
-      ${j.notes?`<div class="payment-row"><span>Notes</span><span style="text-align:right;max-width:60%">${j.notes}</span></div>`:''}
-      ${j.cutAmount?`<div class="payment-row"><span>Your Cut</span><span class="payment-amount amount-green">₹${j.cutAmount}</span></div>`:''}
-      ${j.driverAmount?`<div class="payment-row"><span>Driver Amount</span><span class="payment-amount">₹${j.driverAmount}</span></div>`:''}
-      ${j.receivedFromCustomer?`<div class="payment-row"><span>Received from Customer</span><span class="payment-amount amount-green">₹${j.receivedFromCustomer}</span></div>`:''}
-      ${j.paidToDriver?`<div class="payment-row"><span>Paid to Driver</span><span class="payment-amount amount-red">₹${j.paidToDriver}</span></div>`:''}
-    </div>
-    <div class="job-actions" style="flex-wrap:wrap;">${jobActions(j)}</div>
-  `;
-  openModal('jobDetailModal');
-};
-
-// ── ASSIGN DRIVER ────────────────────────────────────────────
-window.openAssignModal = function(jobId) {
-  document.getElementById('assignJobId').value = jobId;
-  populateDriverSelects();
-  document.getElementById('assignDriverPreview').style.display='none';
-  document.getElementById('assignDriverSelect').onchange = function() {
-    const d = allDrivers.find(x=>x.id===this.value);
-    const prev = document.getElementById('assignDriverPreview');
-    if (d) {
-      prev.style.display='block';
-      prev.innerHTML=`<b>${d.name}</b><br><small>📞 ${d.mobile||'–'} · ${d.carMake||''} · ${d.regNo||''} · ${d.carColor||''}</small>`;
-    } else prev.style.display='none';
-  };
-  openModal('assignModal');
-};
-
-window.confirmAssign = async function() {
-  const jobId = document.getElementById('assignJobId').value;
-  const driverId = document.getElementById('assignDriverSelect').value;
-  if (!driverId) { toast('Select a driver first'); return; }
-  const j = allJobs.find(x=>x.id===jobId);
-  const d = allDrivers.find(x=>x.id===driverId);
-  const cust = allCustomers.find(c=>c.id===j?.customerId);
-  await updateDoc(doc(db,'jobs',jobId), { status:'accepted', assignedTo: driverId, assignedAt: new Date().toISOString() });
-  closeModal('assignModal');
-  closeModal('jobDetailModal');
-  toast('Driver assigned!');
-  // Share with customer via WA
-  if (d && cust) {
-    const msg = `Dear ${cust.name},\nYour cab is confirmed!\n\n🚗 Driver: ${d.name}\n📞 ${d.mobile}\n🚖 ${d.carMake||''} ${d.regNo||''} (${d.carColor||''})\n\n📍 Pickup: ${j.pickup}\n📍 Drop: ${j.drop}\n📅 ${formatDate(j.travelDate)} ${j.pickupTime||''}\n💰 Tariff: ₹${j.tariff||0}\n\n– CabPass`;
-    const waNum = (cust.mobile||'').replace(/\D/g,'');
-    const url = `https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`;
-    window.open(url,'_blank');
-  }
-};
-
-// ── MARK COMPLETED ────────────────────────────────────────────
-window.markCompleted = async function(jobId) {
-  await updateDoc(doc(db,'jobs',jobId), { status:'completed', completedAt: new Date().toISOString() });
-  closeModal('jobDetailModal');
-  toast('Job marked as completed!');
-};
-
-// ── BILL MODAL ────────────────────────────────────────────────
-window.openBillModal = function(jobId) {
-  currentBillJob = allJobs.find(x=>x.id===jobId);
-  if (!currentBillJob) return;
-  const cust = allCustomers.find(c=>c.id===currentBillJob.customerId);
-  document.getElementById('billPreview').innerHTML=`
-    <div class="card" style="margin-bottom:12px;padding:12px;">
-      <div class="payment-row"><span>Customer</span><span>${cust?.name||'–'}</span></div>
-      <div class="payment-row"><span>Pickup</span><span style="text-align:right;max-width:60%">${currentBillJob.pickup}</span></div>
-      <div class="payment-row"><span>Drop</span><span style="text-align:right;max-width:60%">${currentBillJob.drop}</span></div>
-      <div class="payment-row"><span>Date</span><span>${formatDate(currentBillJob.travelDate)}</span></div>
-      <div class="payment-row"><span style="font-weight:700;">Total Tariff</span><span class="payment-amount amount-orange">₹${currentBillJob.tariff||0}</span></div>
-    </div>`;
-  // Load saved cut settings
-  const cuts = JSON.parse(localStorage.getItem('cutSettings')||'{}');
-  document.getElementById('billCutPct').value = cuts.pct||'';
-  document.getElementById('billCutFixed').value = cuts.fixed||'';
-  document.getElementById('cutPreview').style.display='none';
-  ['billCutPct','billCutFixed'].forEach(id=>{
-    document.getElementById(id).oninput = updateCutPreview;
-  });
-  openModal('billModal');
-};
-
-function updateCutPreview() {
-  if (!currentBillJob) return;
-  const tariff = parseFloat(currentBillJob.tariff)||0;
-  const pct = parseFloat(document.getElementById('billCutPct').value)||0;
-  const fixed = parseFloat(document.getElementById('billCutFixed').value)||0;
-  const cut = pct>0 ? (tariff*pct/100) : fixed;
-  const driverAmt = tariff - cut;
-  const prev = document.getElementById('cutPreview');
-  prev.style.display='block';
-  prev.innerHTML=`<div style="font-size:11px;color:var(--muted);margin-bottom:4px;">YOUR CUT</div><div class="cut-num">₹${cut.toFixed(2)}</div><div style="font-size:11px;color:var(--muted);margin-top:4px;">Driver to receive: ₹${driverAmt.toFixed(2)}</div>`;
-}
-
-window.generateBill = async function() {
-  if (!currentBillJob) return;
-  const tariff = parseFloat(currentBillJob.tariff)||0;
-  const pct = parseFloat(document.getElementById('billCutPct').value)||0;
-  const fixed = parseFloat(document.getElementById('billCutFixed').value)||0;
-  const cut = pct>0?(tariff*pct/100):fixed;
-  const driverAmt = tariff-cut;
-  await updateDoc(doc(db,'jobs',currentBillJob.id), {
-    status:'billed', billedAt: new Date().toISOString(),
-    cutAmount: cut, driverAmount: driverAmt, cutPct: pct, cutFixed: fixed
-  });
-  closeModal('billModal');
-  toast('Bill generated!');
-  // Share bill PDF (text version) via WA
-  setTimeout(()=>shareBillWA(), 300);
-};
-
-window.shareBillWA = function() {
-  if (!currentBillJob) return;
-  const cust = allCustomers.find(c=>c.id===currentBillJob.customerId);
-  const tariff = parseFloat(currentBillJob.tariff)||0;
-  const msg = `🧾 *INVOICE – CabPass*\n─────────────────────\n📋 Job: #${currentBillJob.id.substring(0,8).toUpperCase()}\n👤 Customer: ${cust?.name||'–'}\n\n📍 From: ${currentBillJob.pickup}\n📍 To: ${currentBillJob.drop}\n📅 Date: ${formatDate(currentBillJob.travelDate)}\n🕐 Time: ${currentBillJob.pickupTime||'–'}\n\n💰 *Amount Due: ₹${tariff}*\n\nKindly arrange payment at your earliest convenience.\nThank you for travelling with us! 🚖`;
-  const waNum = (cust?.mobile||'').replace(/\D/g,'');
-  const url = waNum ? `https://wa.me/${waNum}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
-  window.open(url,'_blank');
-};
-
-// ── PAYMENT MODAL ────────────────────────────────────────────
-window.openPaymentModal = function(jobId) {
-  currentPaymentJob = allJobs.find(x=>x.id===jobId);
-  if (!currentPaymentJob) return;
-  const cust = allCustomers.find(c=>c.id===currentPaymentJob.customerId);
-  document.getElementById('paymentJobInfo').innerHTML=`<b>${cust?.name||'–'}</b> · ₹${currentPaymentJob.tariff||0} · ${formatDate(currentPaymentJob.travelDate)}<br>Cut: ₹${currentPaymentJob.cutAmount||0} · Driver: ₹${currentPaymentJob.driverAmount||0}`;
-  document.getElementById('pmtReceived').value = currentPaymentJob.tariff||'';
-  document.getElementById('pmtPaidDriver').value = currentPaymentJob.driverAmount||'';
-  document.getElementById('pmtDate').value = new Date().toISOString().split('T')[0];
-  document.getElementById('pmtNotes').value = '';
-  openModal('paymentModal');
-};
-
-window.recordPayment = async function() {
-  if (!currentPaymentJob) return;
-  const received = parseFloat(document.getElementById('pmtReceived').value)||0;
-  const paidDriver = parseFloat(document.getElementById('pmtPaidDriver').value)||0;
-  const date = document.getElementById('pmtDate').value;
-  const notes = document.getElementById('pmtNotes').value;
-  await updateDoc(doc(db,'jobs',currentPaymentJob.id), {
-    status:'paid', receivedFromCustomer: received, paidToDriver: paidDriver,
-    paymentDate: date, paymentNotes: notes, paidAt: new Date().toISOString()
-  });
-  closeModal('paymentModal');
-  toast('Payment recorded! ✅');
-};
-
-// ── DRIVER CRUD ────────────────────────────────────────────
-window.openDriverModal = function() {
-  document.getElementById('driverModalTitle').textContent='Add Driver';
-  document.getElementById('driverEditId').value='';
-  ['dName','dMobile','dCarMake','dRegNo','dCarColor'].forEach(id=>document.getElementById(id).value='');
-  openModal('driverModal');
-};
-
-window.editDriver = function(driverId) {
-  const d = allDrivers.find(x=>x.id===driverId);
-  if (!d) return;
-  document.getElementById('driverModalTitle').textContent='Edit Driver';
-  document.getElementById('driverEditId').value=driverId;
-  document.getElementById('dName').value=d.name||'';
-  document.getElementById('dMobile').value=d.mobile||'';
-  document.getElementById('dCarMake').value=(d.carMake||'')+(d.carModel?' '+d.carModel:'');
-  document.getElementById('dRegNo').value=d.regNo||'';
-  document.getElementById('dCarColor').value=d.carColor||'';
-  openModal('driverModal');
-};
-
-window.saveDriver = async function() {
-  const editId = document.getElementById('driverEditId').value;
-  const name = document.getElementById('dName').value.trim();
-  const mobile = document.getElementById('dMobile').value.trim().replace(/\D/g,'');
-  const carMake = document.getElementById('dCarMake').value.trim();
-  const regNo = document.getElementById('dRegNo').value.trim().toUpperCase();
-  const carColor = document.getElementById('dCarColor').value.trim();
-  if (!name||!mobile) { toast('Name and mobile required'); return; }
-  const data = { name, mobile, carMake, regNo, carColor, createdBy: currentUser.uid };
-  if (editId) {
-    await updateDoc(doc(db,'drivers',editId), data);
-  } else {
-    await addDoc(collection(db,'drivers'), { ...data, createdAt: serverTimestamp() });
-  }
-  closeModal('driverModal');
-  toast('Driver saved!');
-};
-
-window.shareDriverWA = function(driverId) {
-  const d = allDrivers.find(x=>x.id===driverId);
-  if (!d) return;
-  const msg = `🚖 *Driver Details – CabPass*\n─────────────────────\n👤 Name: ${d.name}\n📞 Mobile: ${d.mobile}\n🚗 Vehicle: ${d.carMake||''}\n🔖 Reg No: ${d.regNo||''}\n🎨 Color: ${d.carColor||''}\n\nShared via CabPass`;
-  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-};
-
-// ── CUSTOMER CRUD ────────────────────────────────────────────
-let extraAddresses = [];
-
-window.openCustomerModal = function() {
-  document.getElementById('custModalTitle').textContent='Add Customer';
-  document.getElementById('custEditId').value='';
-  ['cName','cMobile','cHomeAddr','cHomeLocation'].forEach(id=>document.getElementById(id).value='');
-  extraAddresses = [];
-  renderExtraAddrs();
-  openModal('customerModal');
-};
-
-window.editCustomer = function(custId) {
-  const c = allCustomers.find(x=>x.id===custId);
-  if (!c) return;
-  document.getElementById('custModalTitle').textContent='Edit Customer';
-  document.getElementById('custEditId').value=custId;
-  document.getElementById('cName').value=c.name||'';
-  document.getElementById('cMobile').value=c.mobile||'';
-  document.getElementById('cHomeAddr').value=c.homeAddress||'';
-  document.getElementById('cHomeLocation').value=c.homeLocation||'';
-  extraAddresses = c.extraAddresses||[];
-  renderExtraAddrs();
-  openModal('customerModal');
-};
-
-window.addExtraAddr = function() {
-  extraAddresses.push({label:'', address:''});
-  renderExtraAddrs();
-};
-
-function renderExtraAddrs() {
-  document.getElementById('extraAddrsList').innerHTML = extraAddresses.map((a,i)=>`
-    <div style="display:flex;gap:6px;margin-bottom:8px;">
-      <input placeholder="Label (e.g. Office)" value="${a.label}" oninput="extraAddresses[${i}].label=this.value" style="flex:0.4">
-      <input placeholder="Address" value="${a.address}" oninput="extraAddresses[${i}].address=this.value" style="flex:1">
-      <button class="btn btn-danger" style="padding:8px;flex-shrink:0;" onclick="removeExtraAddr(${i})">✕</button>
-    </div>`).join('');
-}
-
-window.removeExtraAddr = function(i) { extraAddresses.splice(i,1); renderExtraAddrs(); };
-
-window.saveCustomer = async function() {
-  const editId = document.getElementById('custEditId').value;
-  const name = document.getElementById('cName').value.trim();
-  const mobile = document.getElementById('cMobile').value.trim().replace(/\D/g,'');
-  const homeAddress = document.getElementById('cHomeAddr').value.trim();
-  const homeLocation = document.getElementById('cHomeLocation').value.trim();
-  if (!name||!mobile) { toast('Name and mobile required'); return; }
-  const data = { name, mobile, homeAddress, homeLocation, extraAddresses, createdBy: currentUser.uid };
-  if (editId) {
-    await updateDoc(doc(db,'customers',editId), data);
-  } else {
-    await addDoc(collection(db,'customers'), { ...data, createdAt: serverTimestamp() });
-  }
-  closeModal('customerModal');
-  toast('Customer saved!');
-};
-
-window.shareCustomerWA = function(custId) {
-  const c = allCustomers.find(x=>x.id===custId);
-  if (!c) return;
-  const msg = `👤 *Customer – CabPass*\n─────────────────────\n${c.name}\n📞 ${c.mobile}\n🏠 ${c.homeAddress||'–'}\n${c.homeLocation?'📍 '+c.homeLocation:''}`;
-  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-};
-
-// ── SHARE JOB ────────────────────────────────────────────────
-window.shareJobWA = function(jobId) {
-  const j = allJobs.find(x=>x.id===jobId);
-  if (!j) return;
-  const cust = allCustomers.find(c=>c.id===j.customerId);
-  const msg = `🚖 *Job Available – CabPass Group*\n─────────────────────\n#${j.id.substring(0,8).toUpperCase()}\n\n📍 Pickup: ${j.pickup}\n📍 Drop: ${j.drop}\n📅 Date: ${formatDate(j.travelDate)}\n🕐 Time: ${j.pickupTime||'–'}\n💰 Tariff: ₹${j.tariff||0}\n${j.notes?'📝 '+j.notes:''}\n\nReply here or call to accept this job.`;
-  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-};
-
-// ── DRIVER PROFILE ────────────────────────────────────────────
-async function loadDriverProfile() {
-  const snap = await getDoc(doc(db,'drivers',currentUser.uid));
-  if (snap.exists()) {
-    const d = snap.data();
-    document.getElementById('pCarMake').value = (d.carMake||'')+(d.carModel?' '+d.carModel:'');
-    document.getElementById('pRegNo').value = d.regNo||'';
-    document.getElementById('pCarColor').value = d.carColor||'';
-    document.getElementById('pContact').value = d.mobile||'';
-  }
-}
-
-window.saveDriverProfile = async function() {
-  const carMake = document.getElementById('pCarMake').value.trim();
-  const regNo = document.getElementById('pRegNo').value.trim().toUpperCase();
-  const carColor = document.getElementById('pCarColor').value.trim();
-  const mobile = document.getElementById('pContact').value.trim().replace(/\D/g,'');
-  await setDoc(doc(db,'drivers',currentUser.uid), {
-    name: currentUserData.name, mobile: mobile||currentUserData.mobile,
-    carMake, regNo, carColor, uid: currentUser.uid, updatedAt: new Date().toISOString()
-  }, {merge:true});
-  toast('Profile saved!');
-};
-
-window.shareMyDetails = function() {
-  const carMake = document.getElementById('pCarMake').value;
-  const regNo = document.getElementById('pRegNo').value;
-  const carColor = document.getElementById('pCarColor').value;
-  const mobile = document.getElementById('pContact').value||currentUserData?.mobile;
-  const msg = `🚖 *Driver Details – CabPass*\n─────────────────────\n👤 ${currentUserData?.name}\n📞 ${mobile}\n🚗 ${carMake}\n🔖 ${regNo}\n🎨 ${carColor}`;
-  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-};
-
-function loadCutSettings() {
-  const cuts = JSON.parse(localStorage.getItem('cutSettings')||'{}');
-  document.getElementById('pCutPct').value = cuts.pct||'';
-  document.getElementById('pCutFixed').value = cuts.fixed||'';
-}
-
-window.saveCutSettings = function() {
-  const pct = document.getElementById('pCutPct').value;
-  const fixed = document.getElementById('pCutFixed').value;
-  localStorage.setItem('cutSettings', JSON.stringify({pct, fixed}));
-  toast('Cut settings saved!');
-};
-
-// ── SIGN OUT ────────────────────────────────────────────────
-window.doSignOut = async function() {
-  await signOut(auth);
-  window.location.href='index.html';
-};
-
-// ── HELPERS ────────────────────────────────────────────────
-function getCustomerName(id) { return allCustomers.find(c=>c.id===id)?.name||''; }
-function getDriverName(id) { return allDrivers.find(d=>d.id===id)?.name||''; }
-
-function formatDate(str) {
-  if (!str) return '–';
-  try {
-    const d = new Date(str);
-    return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
-  } catch { return str; }
-}
-
-window.toast = function(msg) {
-  const t = document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2800);
-};
-
-window.openModal = function(id) { document.getElementById(id).classList.add('active'); };
-window.closeModal = function(id) { document.getElementById(id).classList.remove('active'); };
-
-// Close modal on overlay click
-document.querySelectorAll('.modal-overlay').forEach(overlay=>{
-  overlay.addEventListener('click', function(e) {
-    if (e.target===this) this.classList.remove('active');
-  });
-});
-
-window.showPage = function(pageId) {
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById(pageId).classList.add('active');
-  const navEl = document.getElementById('nav-'+pageId);
-  if (navEl) navEl.classList.add('active');
-};
 </script>
 </body>
 </html>
