@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0f1923">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<title>CabPass – Driver Network</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1923;
+    --surface: #1a2535;
+    --card: #1e2d3d;
+    --accent: #f5a623;
+    --accent2: #e8541e;
+    --text: #e8edf2;
+    --muted: #6b7f93;
+    --green: #2ecc71;
+    --red: #e74c3c;
+    --border: rgba(255,255,255,0.08);
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .logo-area {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .logo-icon {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 16px;
+    box-shadow: 0 8px 32px rgba(245,166,35,0.3);
+  }
+  h1 { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+  h1 span { color: var(--accent); }
+  .tagline { color: var(--muted); font-size: 14px; margin-top: 6px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    width: 100%;
+    max-width: 400px;
+  }
+  .card h2 { font-family: 'Syne', sans-serif; font-size: 20px; margin-bottom: 20px; }
+  .field { margin-bottom: 16px; }
+  label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  input {
+    width: 100%; padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus { border-color: var(--accent); }
+  .btn {
+    width: 100%; padding: 16px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #000;
+    border: none; border-radius: 12px;
+    font-family: 'Syne', sans-serif;
+    font-size: 16px; font-weight: 700;
+    cursor: pointer; margin-top: 8px;
+    transition: opacity 0.2s, transform 0.1s;
+    letter-spacing: 0.3px;
+  }
+  .btn:active { transform: scale(0.98); opacity: 0.9; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--accent);
+    border: 1.5px solid var(--accent);
+    margin-top: 10px;
+  }
+  .link-row { text-align: center; margin-top: 16px; font-size: 14px; color: var(--muted); }
+  .link-row a { color: var(--accent); text-decoration: none; font-weight: 500; }
+  .error-msg { background: rgba(231,76,60,0.15); border: 1px solid var(--red); color: var(--red); padding: 10px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 12px; display: none; }
+  .loading { display: none; text-align: center; color: var(--muted); font-size: 14px; padding: 10px; }
+  .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .version { color: var(--muted); font-size: 11px; text-align: center; margin-top: 20px; }
+  .install-banner { 
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 12px 20px;
+    display: none; align-items: center; gap: 12px;
+    z-index: 100;
+  }
+  .install-banner p { flex: 1; font-size: 13px; color: var(--text); }
+  .install-banner button { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; }
+  .install-banner .btn-install { background: var(--accent); color: #000; }
+  .install-banner .btn-dismiss { background: transparent; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="logo-area">
+  <div class="logo-icon">🚖</div>
+  <h1>Cab<span>Pass</span></h1>
+  <p class="tagline">Driver Network · Job Sharing · Billing</p>
+</div>
+
+<div class="card" id="loginCard">
+  <h2>Sign In</h2>
+  <div class="error-msg" id="loginError"></div>
+  <div class="field">
+    <label>Mobile Number (User ID)</label>
+    <input type="tel" id="loginMobile" placeholder="+91 98765 43210" inputmode="tel">
+  </div>
+  <div class="field">
+    <label>Password</label>
+    <input type="password" id="loginPassword" placeholder="Your password">
+  </div>
+  <div class="loading" id="loginLoading"><span class="spinner"></span> Signing in…</div>
+  <button class="btn" onclick="doLogin()">Sign In</button>
+  <div class="link-row">New here? <a href="#" onclick="showRegister()">Create Account</a></div>
+</div>
+
+<div class="card" id="registerCard" style="display:none">
+  <h2>Create Account</h2>
+  <div class="error-msg" id="regError"></div>
+  <div class="field">
+    <label>Your Name</label>
+    <input type="text" id="regName" placeholder="Full name">
+  </div>
+  <div class="field">
+    <label>Mobile Number (becomes your User ID)</label>
+    <input type="tel" id="regMobile" placeholder="+91 98765 43210" inputmode="tel">
+  </div>
+  <div class="field">
+    <label>Password</label>
+    <input type="password" id="regPassword" placeholder="Minimum 6 characters">
+  </div>
+  <div class="field">
+    <label>Confirm Password</label>
+    <input type="password" id="regConfirm" placeholder="Repeat password">
+  </div>
+  <div class="loading" id="regLoading"><span class="spinner"></span> Creating account…</div>
+  <button class="btn" onclick="doRegister()">Create Account</button>
+  <button class="btn btn-ghost" onclick="showLogin()">Back to Sign In</button>
+</div>
+
+<p class="version">CabPass v1.0 · PWA</p>
+
+<div class="install-banner" id="installBanner">
+  <p>📲 Add CabPass to your home screen for quick access</p>
+  <button class="btn-dismiss" onclick="dismissInstall()">Later</button>
+  <button class="btn-install" onclick="installApp()">Install</button>
+</div>
+
+<!-- Firebase SDK -->
+<script>
+// Register Service Worker for PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(()=>{
+      navigator.serviceWorker.register('sw.js');
+    });
+  });
+}
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// ── PASTE YOUR FIREBASE CONFIG HERE ──────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyC3l3HropqR5iWZniCt5ZI3eGIXAvoTy-w",
+  authDomain: "cabpass-f74b3.firebaseapp.com",
+  projectId: "cabpass-f74b3",
+  storageBucket: "cabpass-f74b3.firebasestorage.app",
+  messagingSenderId: "651336919465",
+  appId: "1:651336919465:web:c1dd5f5dfde9cd069a7cb8"
+};
+// ─────────────────────────────────────────────────────────────────────────────
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Helper: mobile → email format for Firebase Auth
+function mobileToEmail(mobile) {
+  return mobile.replace(/\D/g,'') + '@cabpass.app';
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    window.location.href = 'dashboard.html';
+  }
+});
+
+window.doLogin = async function() {
+  const mobile = document.getElementById('loginMobile').value.trim();
+  const pass = document.getElementById('loginPassword').value;
+  const err = document.getElementById('loginError');
+  const loading = document.getElementById('loginLoading');
+  err.style.display='none';
+  if (!mobile || !pass) { err.textContent='Please fill all fields.'; err.style.display='block'; return; }
+  loading.style.display='block';
+  try {
+    await signInWithEmailAndPassword(auth, mobileToEmail(mobile), pass);
+  } catch(e) {
+    loading.style.display='none';
+    err.textContent = e.code === 'auth/invalid-credential' ? 'Invalid mobile or password.' : e.message;
+    err.style.display='block';
+  }
+};
+
+window.doRegister = async function() {
+  const name = document.getElementById('regName').value.trim();
+  const mobile = document.getElementById('regMobile').value.trim();
+  const pass = document.getElementById('regPassword').value;
+  const confirm = document.getElementById('regConfirm').value;
+  const err = document.getElementById('regError');
+  const loading = document.getElementById('regLoading');
+  err.style.display='none';
+  if (!name || !mobile || !pass) { err.textContent='Please fill all fields.'; err.style.display='block'; return; }
+  if (pass !== confirm) { err.textContent='Passwords do not match.'; err.style.display='block'; return; }
+  if (pass.length < 6) { err.textContent='Password must be at least 6 characters.'; err.style.display='block'; return; }
+  loading.style.display='block';
+  try {
+    const cleanMobile = mobile.replace(/\D/g,'').replace(/^91/,''); // always 10 digits
+    const cred = await createUserWithEmailAndPassword(auth, mobileToEmail(cleanMobile), pass);
+    const uid = cred.user.uid;
+    // Write user doc
+    await setDoc(doc(db, 'users', uid), {
+      name, mobile: cleanMobile, uid,
+      createdAt: new Date().toISOString(), role: 'driver'
+    });
+    // Write driver profile stub (createdBy required for rules)
+    await setDoc(doc(db, 'drivers', uid), {
+      name, mobile: cleanMobile, uid, createdBy: uid,
+      carMake:'', regNo:'', carColor:'', createdAt: new Date().toISOString()
+    });
+    // Redirect happens via onAuthStateChanged in dashboard.html
+  } catch(e) {
+    loading.style.display='none';
+    err.textContent = e.code === 'auth/email-already-in-use' ? 'This mobile number is already registered.' : e.message;
+    err.style.display='block';
+  }
+};
+
+// PWA Install
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault(); deferredPrompt = e;
+  document.getElementById('installBanner').style.display='flex';
+});
+window.installApp = function() {
+  if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt=null; }
+  document.getElementById('installBanner').style.display='none';
+};
+window.dismissInstall = function() {
+  document.getElementById('installBanner').style.display='none';
+};
+</script>
+
+<script>
+window.showRegister = function() {
+  document.getElementById('loginCard').style.display='none';
+  document.getElementById('registerCard').style.display='block';
+};
+window.showLogin = function() {
+  document.getElementById('registerCard').style.display='none';
+  document.getElementById('loginCard').style.display='block';
+};
+</script>
+</body>
+</html>
